@@ -1,47 +1,16 @@
-import React from 'react';
-import {
-  Container,
-  Card,
-  Button,
-  Row,
-  Col
-} from 'react-bootstrap';
+import React from "react";
+import { Container, Card, Button, Row, Col } from "react-bootstrap";
 
-import Auth from '../utils/auth';
-import { removeBookId } from '../utils/localStorage';
-import { useMutation, useQuery } from '@apollo/client';
-import { REMOVE_BOOK } from '../utils/mutations';
-import { QUERY_ME} from '../utils/queries';
+import Auth from "../utils/auth";
+import { removeBookId } from "../utils/localStorage";
+import { useMutation, useQuery } from "@apollo/client";
+import { REMOVE_BOOK } from "../utils/mutations";
+import { QUERY_ME } from "../utils/queries";
 
 const SavedBooks = () => {
-  // const [userData, setUserData] = useState({});
   const { loading, data } = useQuery(QUERY_ME);
-  // use this to determine if `useEffect()` hook needs to run again
-  // const userDataLength = Object.keys(userData).length;
- const [RemoveBook, {error}] = useMutation(REMOVE_BOOK)
-//  , {
-//   update(cache, { data: { removeBook } }) {
-//     try {
-//       const { me } = cache.readQuery({ query: QUERY_ME });
-
-//       cache.writeQuery({
-//         query: QUERY_ME,
-//         data: { savedBooks: [removeBook, ...me.savedBooks] },
-//       });
-//     } catch (e) {
-//       console.error(e);
-//     }
-
-//     // update me object's cache
-//     const { me } = cache.readQuery({ query: QUERY_ME });
-//     cache.writeQuery({
-//       query: QUERY_ME,
-//       data: { me: { ...me, savedBooks: [...me.savedBooks, removeBook] } },
-//     });
-//   },
-
-//  });
-   const books = data?.me.savedBooks || [];
+  const [RemoveBook, { error }] = useMutation(REMOVE_BOOK);
+  const books = data?.me.savedBooks || [];
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
     const token = Auth.loggedIn() ? Auth.getToken() : null;
@@ -51,7 +20,7 @@ const SavedBooks = () => {
     }
 
     try {
-      const {data} = await RemoveBook({variables: {bookId}});
+      const { data } = await RemoveBook({ variables: { bookId } });
 
       // upon success, remove book's id from localStorage
       removeBookId(bookId);
@@ -73,22 +42,33 @@ const SavedBooks = () => {
         </Container>
       </div>
       <Container>
-        <h2 className='pt-5'>
+        <h2 className="pt-5">
           {books.length
-            ? `Viewing ${books.length} saved ${books.length === 1 ? 'book' : 'books'}:`
-            : 'You have no saved books!'}
+            ? `Viewing ${books.length} saved ${
+                books.length === 1 ? "book" : "books"
+              }:`
+            : "You have no saved books!"}
         </h2>
         <Row>
           {books.map((book) => {
             return (
               <Col md="4">
-                <Card key={book.bookId} border='dark'>
-                  {book.image ? <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top' /> : null}
+                <Card key={book.bookId} border="dark">
+                  {book.image ? (
+                    <Card.Img
+                      src={book.image}
+                      alt={`The cover for ${book.title}`}
+                      variant="top"
+                    />
+                  ) : null}
                   <Card.Body>
                     <Card.Title>{book.title}</Card.Title>
-                    <p className='small'>Authors: {book.authors}</p>
+                    <p className="small">Authors: {book.authors}</p>
                     <Card.Text>{book.description}</Card.Text>
-                    <Button className='btn-block btn-danger' onClick={() => handleDeleteBook(book.bookId)}>
+                    <Button
+                      className="btn-block btn-danger"
+                      onClick={() => handleDeleteBook(book.bookId)}
+                    >
                       Delete this Book!
                     </Button>
                   </Card.Body>
